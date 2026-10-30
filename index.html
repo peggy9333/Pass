@@ -7,8 +7,9 @@
 main{max-width:960px;margin:auto;background:white;padding:26px;border-radius:17px;box-shadow:0 4px 22px #17203312}
 h1{font-size:27px;margin:0}h2{font-size:21px;margin:0 0 12px}h3{font-size:17px;margin:20px 0 8px}p{margin:8px 0}
 .muted{color:var(--muted)}.tabs,.choices,.regions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:16px 0}
-button{font:inherit;cursor:pointer}.tab,.choice{padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);text-align:left}
-.tab{font-weight:700}.tab.active,.choice.selected,.choice:hover{background:var(--pale);border-color:var(--blue);color:var(--blue)}
+button{font:inherit;cursor:pointer}.tab,.choice{padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#F2F3F5;color:var(--ink);text-align:left}
+.tab{font-weight:700}.tab.active,.choice.selected{background:var(--pale);border-color:var(--blue);color:var(--blue)}
+.tab:hover,.choice:hover{background:#173B6C;border-color:#173B6C;color:#FFFFFF}
 .panel,.result{border:1px solid var(--line);border-radius:13px;padding:18px;margin:14px 0}.result{background:#f8fafc}
 .note,.info{padding:12px 14px;border-radius:10px;margin:12px 0}.note{background:#fff8e1;border:1px solid #f1dfa4}.info{background:#eef5ff;border:1px solid #d7e5ff}
 details{border:1px solid var(--line);border-radius:10px;padding:10px 13px;margin:10px 0}summary{font-weight:700;cursor:pointer}
@@ -38,6 +39,48 @@ const L=(u,t)=>`<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
 const regions=()=>`<div class="regions">${R.map((x,i)=>`<button class="choice" data-region="${i}">${x}</button>`).join('')}</div>`;
 const southCards=`📍MeN Go 一般卡（高雄捷運站服務台可買）<br>📍TPASS 2.0 常客優惠卡（行政院通勤月票 常客優惠客製卡／TPASS 常客優惠卡）<br>📍TPASS 1.0（限定臺南版、高雄版、屏東版、南高屏版本）<br>📍「在學期間」一卡通二代數位學生證（二代卡＝PLUS卡）<br>📍二代台南市民一般卡／兒童優待卡／青少年優待卡<br><strong>⚠️有些公所申辦到的是一代卡，申辦時須提醒公所要拿來買月票，需要二代卡，二代卡＝PLUS卡。</strong><br>📍一卡通公司識別證<br>📍台積電22啟航客製造型／迷你一卡通<br>📍屏東縣政府《FUN屏東》客製造型一卡通<br>📍醫院識別證：成大醫院識別證、國軍高雄總醫院識別證、高醫中和醫院識別證、小港醫院識別證`;
 const otherCards=`<strong>📍只要是一卡通的卡片，皆可用於設定購買月票。</strong><div class="note"><strong>❌但不包含以下：</strong><br>社福卡、優待卡、效期低於60天的聯名卡、澎湖縣民公車卡／縣民車船卡、國小的基隆樂學卡</div><div class="note"><strong>⚠️不建議用的：（不建議，但真要買還是可以買）</strong><br>數位學生證、學生認同卡<br>因為本來就有乘車優惠，設定月票優惠恐會衝突，例如：今天是扣月票0元搭車，明天是用到學生優惠扣$12。</div>`;
+
+const ridePlanOptions = [
+  ['基隆288方案'],
+  ['宜蘭750方案','北北宜1800方案','北北宜2300方案'],
+  ['台中市299／599方案','彰化縣699方案','南投縣699方案','中彰投苗699／999方案'],
+  ['桃竹竹苗1200方案','桃竹竹799方案','竹竹苗699方案','竹竹288方案'],
+  ['雲林199方案','雲林399方案'],
+  ['嘉義399方案'],
+  ['花蓮199方案','花蓮399方案'],
+  ['臺東299方案'],
+  ['澎湖150方案','澎湖400方案'],
+  ['南高屏月票（請依實際購買方案確認）']
+];
+const rideOfficialUrls = [
+  'https://www.i-pass.com.tw/Page/KeelungRegion',
+  'https://yilan.tpass.tw/notice#Terms',
+  'https://www.taichung-go.tw/ch/about-ticket/index/1#anchor3',
+  'https://dep-traffic.hccg.gov.tw/ch/home.jsp?id=96&parentpath=0,39',
+  'https://yunlin.tpass.tw/notice#Plan',
+  'https://traffic.chiayi.gov.tw/cl.aspx?n=10124',
+  'https://www.hly.tw/tpass/usage',
+  'https://taitung.tpass.tw/notice#Transportation',
+  'https://www.phpto.gov.tw/home.jsp?id=10265&act=view&dataserno=202512110013',
+  'https://men-go.tw/#/MProductList'
+];
+const rideScopeNotes = [
+  '請依官方公告核對基隆288方案適用的交通運具、路線及搭乘範圍。',
+  '宜蘭750方案：宜蘭縣境內市區公車、臺鐵；北宜1800方案：北宜通勤國道客運、臺鐵及免費轉乘宜蘭勁好行。2300方案請依官方公告確認實際適用範圍。',
+  '中彰投苗各票種的適用範圍可能不同，請依所選票種核對公車、捷運、臺鐵及其他公告適用運具與路線。',
+  '桃竹竹苗依購買的生活圈方案（1200／799／699／288）而有不同適用縣市及路線，請依官方公告核對。',
+  '雲林199／399方案均涵蓋公告指定的臺鐵、市區客運及公路客運路線，並包含公共自行車；臺鐵適用站點依方案不同。',
+  '請依嘉義399方案官方公告核對適用運具及路線。',
+  '花蓮199方案適用縣內臺鐵及市區公車；399方案另包含縣內公路客運。臺灣好行路線不適用，臺鐵亦有適用站點及車種限制。',
+  '臺東299方案適用市區公車、公路客運及臺鐵非對號列車；台灣好行路線不適用，臺鐵另有站點及車種限制。',
+  '請依澎湖150／400方案官方公告核對適用的公車及交通船路線與範圍。',
+  '南高屏請依實際購買的月票方案，核對MeN Go官方公告的適用運具及路線。'
+];
+function ridePlanPanel(i){
+  const opts = ridePlanOptions[i].map(x=>`<option value="${x}">${x}</option>`).join('');
+  return `<div class="info"><b>先確認民眾實際購買的月票方案</b><p><select id="ridePlan" style="font:inherit;padding:9px;border:1px solid #cbd5e1;border-radius:8px;max-width:100%;width:100%"><option value="">請選擇月票方案</option>${opts}</select></p><p>${rideScopeNotes[i]}</p><p>🔗 ${L(rideOfficialUrls[i],'查看官方月票使用範圍／路線')}</p><p class="muted">請以官方公告為準；如不確定搭乘路線是否適用，請選擇「不確定」，再確認上下車站點及路線。</p></div><div id="rideDecision" style="display:none"><h3>確認搭乘路線是否在月票使用範圍內</h3><div class="choices"><button class="choice" data-ride="in">有，在月票使用範圍內</button><button class="choice" data-ride="out">沒有，不在月票使用範圍內</button><button class="choice" data-ride="unknown">不確定，需要協助確認</button></div><div id="ride"></div></div>`;
+}
+
 function purchase(i){
 let x=[
 `${common}<p>${app}</p>${ibon}<p>📌 自助售票機：二信循環站後方商場１樓及基隆轉運站</p><p>📌 台鐵指定車站：基隆、三坑、八堵、七堵、百福</p><div class="note">⚠️國小的基隆樂學卡無法用於購買基隆288月票。</div>`,
@@ -104,8 +147,26 @@ if(i===9){out.innerHTML='<div class="result"><h3>2. 餘額是否為負值？</h3
 else{out.innerHTML='<div class="result"><h3>2. 搭乘什麼交通工具？</h3>'+rideOptions(i)+'</div>';rideBind(i,out);}
 });
 }
-function rideOptions(i){return '<div class="choices"><button class="choice" data-ride="out">沒有在該月票的範圍內</button><button class="choice" data-ride="in">有，在該月票的範圍內</button></div><div id="ride"></div>'}
-function rideBind(i,el){el.querySelectorAll('[data-ride]').forEach(b=>b.onclick=()=>el.querySelector('#ride').innerHTML=`<div class="result">${b.dataset.ride==='out'?'月票範圍外的乘車會使用卡內餘額扣款。':i===9?'洽MeN Go確認過卡是否有成功。':'開BTS單確認（但要等該筆搭車被扣款的交易紀錄回傳後再開單）。'}</div>`)}
+function rideOptions(i){return ridePlanPanel(i)}
+function rideBind(i,el){
+  const plan=el.querySelector('#ridePlan');
+  const decision=el.querySelector('#rideDecision');
+  plan.onchange=()=>{
+    decision.style.display=plan.value?'block':'none';
+    el.querySelector('#ride').innerHTML='';
+    el.querySelectorAll('[data-ride]').forEach(x=>x.classList.remove('selected'));
+  };
+  el.querySelectorAll('[data-ride]').forEach(b=>b.onclick=()=>{
+    el.querySelectorAll('[data-ride]').forEach(x=>x.classList.remove('selected'));
+    b.classList.add('selected');
+    const k=b.dataset.ride;
+    let msg='';
+    if(k==='out') msg='月票範圍外的乘車會使用卡內餘額扣款。';
+    else if(k==='in') msg=i===9?'請洽MeN Go確認過卡是否有成功。':'開BTS單確認（但要等該筆搭車被扣款的交易紀錄回傳後再開單）。';
+    else msg='請先向民眾確認搭乘的交通工具、路線、上車站及下車站，再依上方官方使用範圍核對；確認前先不要判定為月票範圍內或範圍外。';
+    el.querySelector('#ride').innerHTML=`<div class="result"><b>已選方案：</b>${plan.value}<p><b>建議處理方式：</b>${msg}</p></div>`;
+  });
+}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>render(b.dataset.cat));
 render('fail');
 </script></body></html>
