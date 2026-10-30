@@ -81,7 +81,18 @@ function ridePlanPanel(i){
   return `<div class="info"><b>先確認民眾實際購買的月票方案</b><p><select id="ridePlan" style="font:inherit;padding:9px;border:1px solid #cbd5e1;border-radius:8px;max-width:100%;width:100%"><option value="">請選擇月票方案</option>${opts}</select></p><p>${rideScopeNotes[i]}</p><p>🔗 ${L(rideOfficialUrls[i],'查看官方月票使用範圍／路線')}</p><p class="muted">請以官方公告為準；如不確定搭乘路線是否適用，請選擇「不確定」，再確認上下車站點及路線。</p></div><div id="rideDecision" style="display:none"><h3>確認搭乘路線是否在月票使用範圍內</h3><div class="choices"><button class="choice" data-ride="in">有，在月票使用範圍內</button><button class="choice" data-ride="out">沒有，不在月票使用範圍內</button><button class="choice" data-ride="unknown">不確定，需要協助確認</button></div><div id="ride"></div></div>`;
 }
 
+
+function southPurchase(){
+  return `<div class="note"><b>⚠️須先註冊MeN Go會員並綁定卡片等資料後，才可至以下通路購買。（且購買完要過卡啟用）</b><br>第一次購買者，不需等待審核通過，但續購需要審核通過，沒通過請洽MeN Go。</div><p>📌 高雄捷運站服務台</p><p>📌 MeN Go APP／MeN Go官網</p><p>📌 iPASS MONEY APP（僅支援PLUS的票卡，另高雄199非TPASS系列方案，無法透過APP購買）</p><p>📌 7-11 ibon機台（會有25元手續費，與南高屏以外的購買步驟不同）</p>${d('展開 ibon 購買步驟',`${S}<p>${L('https://men-go.tw/#/Post/689','步驟圖')}</p><div class="note"><b>※購買完是去櫃台結帳付款，非ibon直接扣款。</b></div>`)}<p>📌 ${L('https://www.railway.gov.tw/tra-tip-web/tip/tip00C/tipC21/view?proCode=8ae4cac3889508e701889af6ea7904e7&subCode=8ae4cac3889508e701889af88e7804fa&lang=zh_TW','南高屏地區的台鐵指定車站')}</p><p>📌 其他縣市／機台（不一定能買到所有方案）</p>${d('展開其他縣市／機台購買據點','<b>台南：</b>臺南、關廟、麻豆、新營轉運站<br><b>高雄：</b>高捷車站服務台、高雄車站、左營站、旗山轉運站<br><b>屏東：</b>屏東、潮州、東港、恆春轉運站<br><b>機台：</b>TPASS X MeNGo機、TPASS X 雷門智慧型售票機<div class="note">嘉義相關的方案確定可以買，其他方案不一定，當下買當下可過卡。</div><b>嘉義縣：</b>嘉義縣新港公所、嘉義客運總公司、朴子轉運站、嘉義縣公車處大雅站、嘉義客運中山站<br><b>嘉義市：</b>嘉義市限期轉運中心、嘉義市政府大廳')}`;
+}
+
 function purchase(i){
+if(i===9){
+  return `<section class="panel"><h2>南高屏｜購買方式</h2>${southPurchase()}</section>`;
+}
+if(!Number.isInteger(i) || i<0 || i>=R.length){
+  return `<section class="panel"><h2>購買方式</h2><p>請重新選擇月票適用地區。</p></section>`;
+}
 let x=[
 `${common}<p>${app}</p>${ibon}<p>📌 自助售票機：二信循環站後方商場１樓及基隆轉運站</p><p>📌 台鐵指定車站：基隆、三坑、八堵、七堵、百福</p><div class="note">⚠️國小的基隆樂學卡無法用於購買基隆288月票。</div>`,
 `${common}<div class="note">⚠️2300方案請直接洽${L('https://yilan.tpass.tw/contact','北北宜定期票客服')}諮詢怎麼購買（因為此方案會牽涉到1200基北北桃月票，所以請諮詢北北宜客服確認該如何設定購買）。</div><p>${app}</p>${ibon}
@@ -98,7 +109,7 @@ ${d('台鐵指定車站','<b>199方案：</b>林內、斗六、斗南<br><b>399�
 `${common}<p>${app}</p>${ibon}${d('台鐵指定車站','和平、和仁、崇德、新城、北埔、花蓮、吉安、志學、壽豐、豐田、林榮新光、南平、鳳林、萬榮、光復、大富、富源、瑞穗、三民、玉里、東里、東竹、富里')}<p>📌 花蓮轉運站</p><p>📌 指定鄉鎮公所：豐濱鄉公所、玉里鎮公所</p>`,
 `${common}<p>${app}</p>${ibon}<p>📌 台鐵指定車站：池上、關山、瑞源、鹿野、山里、台東、康樂、知本、太麻里、金崙、瀧溪、大武</p><p><b>📌 旅遊服務中心：</b>臺東轉運站及臺東火車站的旅遊服務中心【三合一自助售票機】</p><p><b>📌 鄉鎮公所：</b>成功鎮公所及長濱鄉公所的【三合一自助售票機】</p>`,
 `<div class="note">⚠️縣民公車／縣民車船卡優惠並非月票。</div>${common}<p>${app}</p><p>📌 馬公公車總站</p><p>📌 澎湖車船處交通船 馬公候船室</p><p>📌 澎湖車船處交通船 七美售票站</p><p>📌 澎湖車船處交通船 望安售票站</p><div class="info">澎湖方案無法透過 ibon 購買。</div>`,
-`<div class="note"><b>⚠️須先註冊MeN Go會員並綁定卡片等資料後，才可至以下通路購買。（且購買完要過卡啟用）</b><br>第一次購買者，不需等待審核通過，但續購需要審核通過，沒通過請洽MeN Go。</div><p>📌 高雄捷運站服務台</p><p>📌 MeN Go APP／MeN Go官網</p><p>📌 iPASS MONEY APP（僅支援PLUS的票卡，另高雄199非TPASS系列方案，無法透過APP購買）</p><p>📌 7-11 ibon機台（會有25元手續費，與南高屏以外的購買步驟不同）</p>${d('展開 ibon 購買步驟',`${S}<p>${L('https://men-go.tw/#/Post/689','步驟圖')}</p><div class="note"><b>※購買完是去櫃台結帳付款，非ibon直接扣款。</b></div>`)}<p>📌 ${L('https://www.railway.gov.tw/tra-tip-web/tip/tip00C/tipC21/view?proCode=8ae4cac3889508e701889af6ea7904e7&subCode=8ae4cac3889508e701889af88e7804fa&lang=zh_TW','南高屏地區的台鐵指定車站')}</p><p>📌 其他縣市／機台（不一定能買到所有方案）</p>${d('展開其他縣市／機台購買據點','<b>台南：</b>臺南、關廟、麻豆、新營轉運站<br><b>高雄：</b>高捷車站服務台、高雄車站、左營站、旗山轉運站<br><b>屏東：</b>屏東、潮州、東港、恆春轉運站<br><b>機台：</b>TPASS X MeNGo機、TPASS X 雷門智慧型售票機<div class="note">嘉義相關的方案確定可以買，其他方案不一定，當下買當下可過卡。</div><b>嘉義縣：</b>嘉義縣新港公所、嘉義客運總公司、朴子轉運站、嘉義縣公車處大雅站、嘉義客運中山站<br><b>嘉義市：</b>嘉義市限期轉運中心、嘉義市政府大廳')}`
+southPurchase()
 ];
 return `<section class="panel"><h2>${R[i]}｜購買方式</h2>${x[i]}</section>`;
 }
