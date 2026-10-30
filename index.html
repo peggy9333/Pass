@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>月票客服查詢系統</title>
+<title>月票流程查詢系統</title>
 <style>
 :root{--ink:#253247;--muted:#667085;--line:#e2e8f0;--blue:#2457a7;--pale:#eaf2ff;--bg:#f3f5f8}
 *{box-sizing:border-box}body{margin:0;padding:22px 14px 40px;background:var(--bg);color:var(--ink);font:16px/1.7 "Microsoft JhengHei",Arial,sans-serif}
@@ -22,7 +22,8 @@ a{color:#175cd3;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%
 <button class="tab active" data-cat="fail">無法購買月票</button>
 <button class="tab" data-cat="charged">已買月票但無法使用，仍被扣款</button>
 <button class="tab" data-cat="activate">月票怎麼啟用</button>
-<button class="tab" data-cat="purchase">月票怎麼購買</button></nav>
+<button class="tab" data-cat="purchase">月票怎麼購買</button>
+<button class="tab" data-cat="refund">月票退費（卡片遺失仍有月票、買錯方案等）</button></nav>
 <div id="content"></div><div class="footer">月票客服查詢系統｜依提供資料整理</div>
 </main>
 <script>
@@ -113,13 +114,99 @@ southPurchase()
 ];
 return `<section class="panel"><h2>${R[i]}｜購買方式</h2>${x[i]}</section>`;
 }
+
+function refund(i){
+  const south = i===9;
+  const southItems = [
+    {
+      label:"【無法感應】但卡片內仍有月票還沒用完",
+      content:`<div class="note">📌月票跟卡片需要分開處理：(月票有時效，建議先詢問MeN Go月票如何處理)</div>
+      <p><b>月票：</b>洽MeN Go詢問。</p>
+      <p>👉MeN Go客服電話：(07)970-8720、449-8399 (手機撥打+02)，週一至週日 07:00～19:00</p>
+      <p><b>卡片：</b>寄回一卡通檢測。</p>`
+    },
+    {
+      label:"【還可以感應】因故不需使用月票(ex,買錯方案、忘了啟用月票)",
+      content:`<p>因月票為MeN Go負責，請洽MeN Go詢問。</p>
+      <p>👉MeN Go客服電話：(07)970-8720、449-8399 (手機撥打+02)，週一至週日 07:00～19:00</p>`
+    },
+    {
+      label:"【掛失】卡片遺失，但卡內還有月票",
+      content:`<div class="note">📌月票跟卡片需要分開處理：(若客戶詢問在MeN Go端怎麼操作掛失轉移月票，請客戶自行問MeN Go)</div>
+      <p><b>月票：</b>洽MeN Go確認月票處理方式</p>
+      <p>👉MeN Go客服電話：(07)970-8720、449-8399 (手機撥打+02)，週一至週日 07:00～19:00</p>
+      <p><b>卡片：</b>依照各卡片的掛失方式掛失，一卡通端有掛失紀錄才會退卡內儲值金。</p>`
+    }
+  ];
+  const otherItems = [
+    {
+      label:"[聯名卡]卡片掛失/到期換卡/毀損...等有黑名單，或無法感應",
+      content:`<ol>
+        <li>透過交易紀錄、定期票系統查看，確認卡片本身仍有有效月票且尚未過期。</li>
+        <li>確認卡片已經有被下黑名單（沒下黑名單的話需請客戶先找銀行停卡）。</li>
+        <li>若查看仍有有效月票，請開BTS單確認是否有費用可退。</li>
+      </ol>
+      <div class="note">📌不需告知客戶到底有無費用可退，就告知確認後回覆即可，因為實際有無費用可退需等承辦單位確認。</div>
+      <div class="note">⚠️如客戶是<b>中彰投苗系列方案(不論是台中299還是中彰投苗999等)</b>，開BTS單需要附上票卡正反面照片(掛失例外)。</div>
+      <div class="note">⚠️記得跟客戶確認什麼原因跟銀行停卡，並備註在BTS單上。</div>`
+    },
+    {
+      label:"[非聯名卡]無法感應 (掛失以外的無法感應情境都點我)",
+      content:`<p>依照問題票處理方式。(將卡片寄回一卡通檢測)</p>
+      <p>後續若票卡無法修復退費的話，相關單位會協助計算是否有月票的殘值可以退。(不一定有殘值，若有就會跟著儲值金一起退)</p>`
+    },
+    {
+      label:"[非聯名卡]掛失",
+      content:`<p>依照掛失的處理方式。(依照各卡片的掛失方式掛失。)</p>
+      <p>後續相關單位會協助計算是否有月票的殘值可以退。(不一定有殘值，若有就會跟著儲值金一起退。)</p>`
+    },
+    {
+      label:"[所有卡(含聯名卡)] 卡片還可以感應，但因故不需使用月票(ex,買錯方案、忘了啟用月票)",
+      content:`<p>找販售通路辦理退費。(30日內未啟用的退票也是這方式)</p>
+      <div class="note">⚠️若洽台鐵退票，因台鐵不同站點可退的月票方案不同，請參考<a href="https://www.railway.gov.tw/tra-tip-web/tip/tip00C/tipC21/view?proCode=8ae4cac3889508e701889af6ea7904e7&amp;subCode=8ae4cac38c5f68e1018c682088c20b45&amp;lang=zh_TW" target="_blank" rel="noopener">台鐵網站</a>(點進網頁左側記得選不同縣市月票)</div>
+      <div class="note">⚠️ibon或7-11無法退月票，需至其他販售通路退票。</div>
+      <details>
+        <summary>若客戶不方便/不願意去其他通路退月票</summary>
+        <p>可將卡片+存摺影本一併寄回一卡通，我們會協助辦理卡片停卡退費後，再重新開卡寄回給客戶。(參考PJP3CS-18938)</p>
+        <p>📍不收寄回郵資跟開卡費。</p>
+        <p>📍原本卡內的餘額會一起跟月票殘值退費。</p>
+        <p>📍寄回紙條上要註明無法前往實體通路退月票的原因。(並同步填寫給問題票組訊息)</p>
+        <p>📍造型卡及聯名卡若要寄回，要先詢問一卡通是否可比照辦理。</p>
+      </details>`
+    }
+  ];
+  const items = south ? southItems : otherItems;
+  const buttons = items.map((item,n)=>`<button type="button" class="choice refund-choice" data-refund="${n}">${item.label}</button>`).join("");
+  const detailId = "refund-detail";
+  return `<section class="panel"><h2>${R[i]}｜月票退費</h2><p class="muted">請選擇退費情境：</p><div class="choices">${buttons}</div><div id="${detailId}"></div></section>`;
+}
+
 function render(cat){
 document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));
-document.getElementById('content').innerHTML=`<section class="panel"><h2>${({fail:'無法購買月票',charged:'已買月票但無法使用，仍被扣款',activate:'月票怎麼啟用',purchase:'月票怎麼購買'})[cat]}</h2><p class="muted">請先選擇月票適用地區：</p>${regions()}</section><div id="answer"></div>`;
+document.getElementById('content').innerHTML=`<section class="panel"><h2>${({fail:'無法購買月票',charged:'已買月票但無法使用，仍被扣款',activate:'月票怎麼啟用',purchase:'月票怎麼購買',refund:'月票退費（卡片遺失仍有月票、買錯方案等）'})[cat]}</h2><p class="muted">請先選擇月票適用地區：</p>${regions()}</section><div id="answer"></div>`;
 document.querySelectorAll('[data-region]').forEach(b=>b.onclick=()=>{
 document.querySelectorAll('[data-region]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');
 let i=+b.dataset.region,answer=document.getElementById('answer');
 if(cat==='purchase'){answer.innerHTML=purchase(i);return;}
+if(cat==='refund'){
+answer.innerHTML=refund(i);
+const refundItems=i===9?[
+`<div class="note">📌月票跟卡片需要分開處理：(月票有時效，建議先詢問MeN Go月票如何處理)</div><p><b>月票：</b>洽MeN Go詢問。</p><p>👉MeN Go客服電話：(07)970-8720、449-8399 (手機撥打+02)，週一至週日 07:00～19:00</p><p><b>卡片：</b>寄回一卡通檢測。</p>`,
+`<p>因月票為MeN Go負責，請洽MeN Go詢問。</p><p>👉MeN Go客服電話：(07)970-8720、449-8399 (手機撥打+02)，週一至週日 07:00～19:00</p>`,
+`<div class="note">📌月票跟卡片需要分開處理：(若客戶詢問在MeN Go端怎麼操作掛失轉移月票，請客戶自行問MeN Go)</div><p><b>月票：</b>洽MeN Go確認月票處理方式</p><p>👉MeN Go客服電話：(07)970-8720、449-8399 (手機撥打+02)，週一至週日 07:00～19:00</p><p><b>卡片：</b>依照各卡片的掛失方式掛失，一卡通端有掛失紀錄才會退卡內儲值金。</p>`
+]:[
+`<ol><li>透過交易紀錄、定期票系統查看，確認卡片本身仍有有效月票且尚未過期。</li><li>確認卡片已經有被下黑名單（沒下黑名單的話需請客戶先找銀行停卡）。</li><li>若查看仍有有效月票，請開BTS單確認是否有費用可退。</li></ol><div class="note">📌不需告知客戶到底有無費用可退，就告知確認後回覆即可，因為實際有無費用可退需等承辦單位確認。</div><div class="note">⚠️如客戶是<b>中彰投苗系列方案(不論是台中299還是中彰投苗999等)</b>，開BTS單需要附上票卡正反面照片(掛失例外)。</div><div class="note">⚠️記得跟客戶確認什麼原因跟銀行停卡，並備註在BTS單上。</div>`,
+`<p>依照問題票處理方式。(將卡片寄回一卡通檢測)</p><p>後續若票卡無法修復退費的話，相關單位會協助計算是否有月票的殘值可以退。(不一定有殘值，若有就會跟著儲值金一起退)</p>`,
+`<p>依照掛失的處理方式。(依照各卡片的掛失方式掛失。)</p><p>後續相關單位會協助計算是否有月票的殘值可以退。(不一定有殘值，若有就會跟著儲值金一起退。)</p>`,
+`<p>找販售通路辦理退費。(30日內未啟用的退票也是這方式)</p><div class="note">⚠️若洽台鐵退票，因台鐵不同站點可退的月票方案不同，請參考<a href="https://www.railway.gov.tw/tra-tip-web/tip/tip00C/tipC21/view?proCode=8ae4cac3889508e701889af6ea7904e7&amp;subCode=8ae4cac38c5f68e1018c682088c20b45&amp;lang=zh_TW" target="_blank" rel="noopener">台鐵網站</a>(點進網頁左側記得選不同縣市月票)</div><div class="note">⚠️ibon或7-11無法退月票，需至其他販售通路退票。</div><details><summary>若客戶不方便/不願意去其他通路退月票</summary><p>可將卡片+存摺影本一併寄回一卡通，我們會協助辦理卡片停卡退費後，再重新開卡寄回給客戶。(參考PJP3CS-18938)</p><p>📍不收寄回郵資跟開卡費。</p><p>📍原本卡內的餘額會一起跟月票殘值退費。</p><p>📍寄回紙條上要註明無法前往實體通路退月票的原因。(並同步填寫給問題票組訊息)</p><p>📍造型卡及聯名卡若要寄回，要先詢問一卡通是否可比照辦理。</p></details>`
+];
+document.querySelectorAll('[data-refund]').forEach(b=>b.onclick=()=>{
+document.querySelectorAll('[data-refund]').forEach(x=>x.classList.remove('selected'));
+b.classList.add('selected');
+document.getElementById('refund-detail').innerHTML='<section class="result">'+refundItems[+b.dataset.refund]+'</section>';
+});
+return;
+}
 if(cat==='activate'){answer.innerHTML=`<section class="panel"><h2>${R[i]}｜月票啟用方式</h2>${i===9?'<div class="note"><b>新購或續約月票，皆需透過以下方式先啟用月票後才可搭乘（否則會扣卡內儲值金）：</b></div><ul><li>高雄捷運各車站服務台</li><li>7-11 ibon '+L('https://men-go.tw/#/Post/696','過卡說明')+'</li><li>iPASS MONEY APP過卡（僅支援PLUS卡）</li></ul>':'<p>定期票購買後，第一次靠卡搭乘交通工具時就會啟用月票，當次乘車也會計算在月票使用。</p><div class="info">📌除台鐵外的交通工具，進站／上車就會啟用月票，但台鐵要完成「進出站」刷卡才會啟用月票。（漏刷就不會啟用）</div><div class="note">📌YouBike站點無法啟用月票，需先啟用後再去租借，否則會扣卡內儲值金。</div>'}</section>`;return;}
 if(cat==='charged'){charged(i,answer);return;}
 fail(i,answer);
@@ -151,9 +238,9 @@ function charged(i,el){
 el.innerHTML=`<section class="panel"><h2>${R[i]}｜排查方式</h2>${i===9?'<h3>1. 有無啟用月票？</h3><div class="choices"><button class="choice" data-q="not">沒有</button><button class="choice" data-q="late">沒有但已經超過啟用日</button><button class="choice" data-q="yes">有／不確定</button></div>':'<h3>1. 餘額是否為負值？</h3><div class="choices"><button class="choice" data-q="negative">是</button><button class="choice" data-q="ok">否</button></div>'}<div id="qresult"></div></section>`;
 el.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{
 let q=b.dataset.q,out=el.querySelector('#qresult');
-if(q==='not'){out.innerHTML='<div class="result">請先去過卡啟用，才可使用月票。</div>';return;}
-if(q==='late'){out.innerHTML='<div class="result">請洽MeN Go確認如何處理。</div>';return;}
-if(q==='negative'){out.innerHTML='<div class="result">請去加值。</div>';return;}
+if(q==='not'){out.innerHTML='<div class="result">南高屏的月票需要先過卡啟用後，才可使用到月票。沒啟用就去搭車會扣卡內餘額。</div>';return;}
+if(q==='late'){out.innerHTML='<div class="result">請洽MeN Go確認如何處理。\n👉MeN Go客服電話：(07)970-8720、449-8399 (手機撥打+02)，週一至週日 07:00～19:00。</div>';return;}
+if(q==='negative'){out.innerHTML='<div class="result">餘額如果是負值會無法正常觸發月票。請客戶先去加值，讓餘額>=0元再去嘗試搭乘。</div>';return;}
 if(i===9){out.innerHTML='<div class="result"><h3>2. 餘額是否為負值？</h3><div class="choices"><button class="choice" data-bal="neg">是</button><button class="choice" data-bal="ok">否</button></div><div id="bresult"></div></div>';out.querySelectorAll('[data-bal]').forEach(x=>x.onclick=()=>{out.querySelector('#bresult').innerHTML=x.dataset.bal==='neg'?'<div class="result">請去加值。</div>':'<div class="result"><h3>3. 搭乘什麼交通工具？</h3>'+rideOptions(i)+'</div>';rideBind(i,out.querySelector('#bresult'));});}
 else{out.innerHTML='<div class="result"><h3>2. 搭乘什麼交通工具？</h3>'+rideOptions(i)+'</div>';rideBind(i,out);}
 });
